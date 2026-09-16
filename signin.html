@@ -746,15 +746,25 @@
 
 
         /* Redirect based on selected role */
-        if (valid) {
+ if (valid) {
 
-          if (role.value === "admin") {
-            window.location.href = "admin-dashboard.html";
-          } else if (role.value === "user") {
-            window.location.href = "user-dashboard.html";
-          }
+    const emailValue = email.value.trim();
+    const loginTime = new Date().toLocaleString("en-IN", {
+        dateStyle: "medium",
+        timeStyle: "short"
+    });
 
-        }
+    localStorage.setItem("stacklyUserEmail", emailValue);
+    localStorage.setItem("stacklyUserRole", role.value);
+    localStorage.setItem("stacklyLoginTime", loginTime);
+
+    if (role.value === "admin") {
+        window.location.href = "admin-dashboard.html";
+    } else if (role.value === "user") {
+        window.location.href = "user-dashboard.html";
+    }
+
+}
 
       });
 

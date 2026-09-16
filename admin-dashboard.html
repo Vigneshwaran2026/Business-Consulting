@@ -1339,11 +1339,9 @@
 
           <div class="user_details">
 
-            <strong>Administrator</strong>
+            <strong id="headerName">Administrator</strong>
 
-            <span id="headerEmail">
-              admin@example.com
-            </span>
+            <span id="headerEmail">admin@example.com</span>
 
           </div>
 
@@ -2829,6 +2827,40 @@
     });
 
   </script>
+
+  <script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const email = localStorage.getItem("stacklyUserEmail");
+    const loginTime = localStorage.getItem("stacklyLoginTime");
+
+    const headerEmail = document.getElementById("headerEmail");
+    const headerAvatar = document.getElementById("headerAvatar");
+
+    if (email) {
+        headerEmail.textContent = email;
+
+        if (headerAvatar) {
+            headerAvatar.textContent = email.charAt(0).toUpperCase();
+        }
+    }
+
+    // Show Sign In Time below the email
+    if (loginTime && headerEmail) {
+        const loginTimeElement = document.createElement("small");
+        loginTimeElement.id = "headerLoginTime";
+        loginTimeElement.textContent = "Sign In: " + loginTime;
+
+        loginTimeElement.style.display = "block";
+        loginTimeElement.style.marginTop = "3px";
+        loginTimeElement.style.fontSize = "10px";
+        loginTimeElement.style.color = "#71807b";
+
+        headerEmail.parentElement.appendChild(loginTimeElement);
+    }
+
+});
+</script>
 
 </body>
 

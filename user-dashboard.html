@@ -1,0 +1,3624 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>User Dashboard | Stackly</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+  <style>
+    :root {
+      --green: #063d2f;
+      --green-light: #0b5743;
+      --yellow: #fbd819;
+      --white: #ffffff;
+      --bg: #f5f8f6;
+      --border: #e2e9e6;
+      --text: #063d2f;
+      --muted: #71807b;
+      --danger: #dc3545;
+      --success: #198754;
+      --warning: #d69e00;
+      --shadow: 0 10px 35px rgba(6, 61, 47, .07);
+      --sidebar-width: 260px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: "DM Sans", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font-family: inherit;
+    }
+
+    /* =========================================
+       SIDEBAR
+    ========================================= */
+
+    .user_sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+      width: var(--sidebar-width);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: var(--green);
+      transition: .35s ease;
+    }
+
+    .sidebar_logo {
+      height: 86px;
+      padding: 20px 28px;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, .09);
+    }
+
+    .sidebar_logo img {
+      width: 145px;
+      height: auto;
+      display: block;
+    }
+
+    .sidebar_menu {
+      flex: 1;
+      padding: 25px 14px;
+      overflow-y: auto;
+    }
+
+    .menu_label {
+      display: block;
+      margin: 0 13px 12px;
+      color: rgba(255, 255, 255, .38);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .sidebar_menu ul {
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+
+    .sidebar_menu li {
+      margin-bottom: 5px;
+    }
+
+    .sidebar_menu a {
+      min-height: 48px;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      border-radius: 8px;
+      color: rgba(255, 255, 255, .68);
+      font-size: 13px;
+      font-weight: 600;
+      transition: .3s ease;
+    }
+
+    .sidebar_menu a i {
+      width: 19px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .sidebar_menu a:hover {
+      color: var(--yellow);
+      background: rgba(255, 255, 255, .06);
+      transform: translateX(3px);
+    }
+
+    .sidebar_menu a.active {
+      color: var(--green);
+      background: var(--yellow);
+      box-shadow: 0 8px 20px rgba(251, 216, 25, .14);
+    }
+
+    .sidebar_menu a.active i {
+      color: var(--green);
+    }
+
+    .sidebar_bottom {
+      padding: 15px;
+      border-top: 1px solid rgba(255, 255, 255, .09);
+    }
+
+    .logout_btn {
+      width: 100%;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      border: 1px solid rgba(255, 255, 255, .18);
+      border-radius: 8px;
+      background: transparent;
+      color: rgba(255, 255, 255, .8);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: .3s ease;
+    }
+
+    .logout_btn:hover {
+      color: var(--green);
+      background: var(--yellow);
+      border-color: var(--yellow);
+    }
+
+    /* =========================================
+       MOBILE
+    ========================================= */
+
+    .sidebar_overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 998;
+      display: none;
+      background: rgba(0, 0, 0, .45);
+    }
+
+    .sidebar_overlay.show {
+      display: block;
+    }
+
+    /* =========================================
+       MAIN
+    ========================================= */
+
+    .user_main {
+      min-height: 100vh;
+      margin-left: var(--sidebar-width);
+    }
+
+    /* =========================================
+       HEADER
+    ========================================= */
+
+    .user_header {
+      position: sticky;
+      top: 0;
+      z-index: 900;
+      height: 86px;
+      padding: 0 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 25px;
+      background: rgba(255, 255, 255, .95);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(15px);
+    }
+
+    .mobile_menu_btn {
+      display: none;
+      width: 42px;
+      height: 42px;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--white);
+      color: var(--green);
+      cursor: pointer;
+    }
+
+    .header_search {
+      position: relative;
+      width: 100%;
+      max-width: 440px;
+    }
+
+    .header_search i {
+      position: absolute;
+      top: 50%;
+      left: 16px;
+      transform: translateY(-50%);
+      color: #8b9894;
+      font-size: 14px;
+    }
+
+    .header_search input {
+      width: 100%;
+      height: 46px;
+      padding: 0 18px 0 43px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      outline: none;
+      background: #f8faf9;
+      color: var(--green);
+      font-size: 13px;
+      transition: .3s ease;
+    }
+
+    .header_search input:focus {
+      border-color: var(--yellow);
+      background: var(--white);
+      box-shadow: 0 0 0 3px rgba(251, 216, 25, .12);
+    }
+
+    .header_right {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .header_notification {
+      position: relative;
+      width: 42px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--white);
+      color: var(--green);
+      cursor: pointer;
+    }
+
+    .notification_dot {
+      position: absolute;
+      top: 9px;
+      right: 9px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--yellow);
+      border: 2px solid var(--white);
+    }
+
+    .header_user {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .user_avatar {
+      width: 42px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: var(--yellow);
+      color: var(--green);
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .user_details strong {
+      display: block;
+      color: var(--green);
+      font-size: 13px;
+    }
+
+    .user_details span {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    /* =========================================
+       CONTENT
+    ========================================= */
+
+    .dashboard_content {
+      padding: 32px;
+    }
+
+    .page_heading {
+      margin-bottom: 28px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .page_heading .eyebrow {
+      display: block;
+      margin-bottom: 7px;
+      color: #9b8500;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .page_heading h1 {
+      margin-bottom: 6px;
+      color: var(--green);
+      font-family: "Manrope", sans-serif;
+      font-size: 30px;
+      font-weight: 800;
+    }
+
+    .page_heading p {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .header_action {
+      min-height: 44px;
+      padding: 0 18px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 2px solid var(--yellow);
+      border-radius: 7px;
+      background: var(--yellow);
+      color: var(--green);
+      font-size: 13px;
+      font-weight: 700;
+      transition: .3s ease;
+    }
+
+    .header_action:hover {
+      background: var(--green);
+      border-color: var(--green);
+      color: var(--white);
+      transform: translateY(-2px);
+    }
+
+    /* =========================================
+       SECTIONS
+    ========================================= */
+
+    .dashboard_section {
+      display: none;
+      animation: sectionReveal .45s ease both;
+    }
+
+    .dashboard_section.active {
+      display: block;
+    }
+
+    /* =========================================
+       STAT CARDS
+    ========================================= */
+
+    .stats_grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-bottom: 22px;
+    }
+
+    .stat_card {
+      position: relative;
+      min-height: 145px;
+      padding: 22px;
+      overflow: hidden;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      transition: .3s ease;
+    }
+
+    .stat_card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 16px 40px rgba(6, 61, 47, .11);
+    }
+
+    .stat_card::after {
+      content: "";
+      position: absolute;
+      width: 85px;
+      height: 85px;
+      right: -30px;
+      bottom: -30px;
+      border-radius: 50%;
+      background: rgba(251, 216, 25, .12);
+    }
+
+    .stat_top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+
+    .stat_icon {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      background: rgba(6, 61, 47, .07);
+      color: var(--green);
+      font-size: 15px;
+    }
+
+    .stat_change {
+      color: var(--success);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .stat_card h3 {
+      margin-bottom: 4px;
+      color: var(--green);
+      font-family: "Manrope", sans-serif;
+      font-size: 27px;
+      font-weight: 800;
+    }
+
+    .stat_card p {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    /* =========================================
+       CONTENT CARD
+    ========================================= */
+
+    .content_grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 20px;
+      margin-bottom: 22px;
+    }
+
+    .content_card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card_header {
+      min-height: 70px;
+      padding: 18px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card_header h2 {
+      color: var(--green);
+      font-family: "Manrope", sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .card_header p {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .card_link {
+      color: var(--green);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .card_link:hover {
+      color: #9b8500;
+    }
+
+    .card_body {
+      padding: 22px;
+    }
+
+    /* =========================================
+       PROJECT PROGRESS
+    ========================================= */
+
+    .project_item {
+      padding: 15px 0;
+      border-bottom: 1px solid #edf1ef;
+    }
+
+    .project_item:first-child {
+      padding-top: 0;
+    }
+
+    .project_item:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .project_top {
+      margin-bottom: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    .project_top strong {
+      color: var(--green);
+      font-size: 12px;
+    }
+
+    .project_top span {
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .progress_bar {
+      width: 100%;
+      height: 7px;
+      overflow: hidden;
+      border-radius: 10px;
+      background: #e9efec;
+    }
+
+    .progress_value {
+      height: 100%;
+      border-radius: 10px;
+      background: var(--green);
+      animation: progressGrow .8s ease both;
+    }
+
+    .progress_value.yellow {
+      background: var(--yellow);
+    }
+
+    /* =========================================
+       QUICK ACTIONS
+    ========================================= */
+
+    .quick_actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .quick_action {
+      min-height: 95px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 9px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: #fbfcfb;
+      color: var(--green);
+      transition: .3s ease;
+    }
+
+    .quick_action:hover {
+      border-color: var(--yellow);
+      background: #fffdf1;
+      transform: translateY(-3px);
+    }
+
+    .quick_action i {
+      font-size: 17px;
+    }
+
+    .quick_action span {
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    /* =========================================
+       ACTIVITY
+    ========================================= */
+
+    .activity_item {
+      display: flex;
+      gap: 13px;
+      padding: 14px 0;
+      border-bottom: 1px solid #edf1ef;
+    }
+
+    .activity_item:first-child {
+      padding-top: 0;
+    }
+
+    .activity_item:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .activity_icon {
+      width: 38px;
+      height: 38px;
+      flex: 0 0 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      background: rgba(251, 216, 25, .18);
+      color: var(--green);
+      font-size: 13px;
+    }
+
+    .activity_content strong {
+      display: block;
+      margin-bottom: 3px;
+      color: var(--green);
+      font-size: 12px;
+    }
+
+    .activity_content span {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    /* =========================================
+       TOOLBAR
+    ========================================= */
+
+    .section_toolbar {
+      margin-bottom: 18px;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+
+    .section_search {
+      position: relative;
+      width: 100%;
+      max-width: 350px;
+    }
+
+    .section_search i {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #8b9894;
+      font-size: 13px;
+    }
+
+    .section_search input {
+      width: 100%;
+      height: 42px;
+      padding: 0 15px 0 38px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      outline: none;
+      font-size: 12px;
+      color: var(--green);
+    }
+
+    .section_search input:focus {
+      border-color: var(--yellow);
+      box-shadow: 0 0 0 3px rgba(251, 216, 25, .1);
+    }
+
+    .filter_select {
+      height: 42px;
+      padding: 0 35px 0 12px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      background: var(--white);
+      color: var(--green);
+      outline: none;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    /* =========================================
+       TABLE
+    ========================================= */
+
+    .table_wrap {
+      width: 100%;
+      overflow-x: auto;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+    }
+
+    .user_table {
+      width: 100%;
+      min-width: 700px;
+      border-collapse: collapse;
+    }
+
+    .user_table th {
+      padding: 15px 18px;
+      background: #f8faf9;
+      color: #687771;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .7px;
+      text-align: left;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .user_table td {
+      padding: 16px 18px;
+      color: var(--green);
+      font-size: 12px;
+      border-bottom: 1px solid #edf1ef;
+    }
+
+    .user_table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 9px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .status.active {
+      background: rgba(25, 135, 84, .1);
+      color: var(--success);
+    }
+
+    .status.pending {
+      background: rgba(251, 216, 25, .18);
+      color: #997d00;
+    }
+
+    .status.completed {
+      background: rgba(6, 61, 47, .09);
+      color: var(--green);
+    }
+
+    .table_action {
+      width: 32px;
+      height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--white);
+      color: var(--green);
+      cursor: pointer;
+      transition: .25s ease;
+    }
+
+    .table_action:hover {
+      background: var(--yellow);
+      border-color: var(--yellow);
+    }
+
+    /* =========================================
+       CONSULTING REQUEST
+    ========================================= */
+
+    .consulting_grid {
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 20px;
+    }
+
+    .request_form {
+      padding: 24px;
+    }
+
+    .form_group {
+      margin-bottom: 18px;
+    }
+
+    .form_group label {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .form_group input,
+    .form_group select,
+    .form_group textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      outline: none;
+      color: var(--green);
+      background: var(--white);
+      font-size: 12px;
+      transition: .3s ease;
+    }
+
+    .form_group input,
+    .form_group select {
+      height: 45px;
+      padding: 0 13px;
+    }
+
+    .form_group textarea {
+      min-height: 110px;
+      padding: 13px;
+      resize: vertical;
+    }
+
+    .form_group input:focus,
+    .form_group select:focus,
+    .form_group textarea:focus {
+      border-color: var(--yellow);
+      box-shadow: 0 0 0 3px rgba(251, 216, 25, .1);
+    }
+
+    .form_submit {
+      min-height: 45px;
+      padding: 0 18px;
+      border: 2px solid var(--yellow);
+      border-radius: 7px;
+      background: var(--yellow);
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: .3s ease;
+    }
+
+    .form_submit:hover {
+      background: var(--green);
+      border-color: var(--green);
+      color: var(--white);
+      transform: translateY(-2px);
+    }
+
+    .consulting_info {
+      padding: 24px;
+    }
+
+    .info_box {
+      padding: 18px;
+      margin-bottom: 12px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: #fbfcfb;
+    }
+
+    .info_box:last-child {
+      margin-bottom: 0;
+    }
+
+    .info_icon {
+      width: 38px;
+      height: 38px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      background: rgba(251, 216, 25, .18);
+      color: var(--green);
+    }
+
+    .info_box h3 {
+      margin-bottom: 5px;
+      color: var(--green);
+      font-family: "Manrope", sans-serif;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .info_box p {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    /* =========================================
+       PROFILE
+    ========================================= */
+
+    .profile_card {
+      max-width: 850px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .profile_banner {
+      height: 130px;
+      position: relative;
+      background: var(--green);
+      overflow: hidden;
+    }
+
+    .profile_banner::after {
+      content: "";
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      right: -60px;
+      top: -120px;
+      border: 35px solid rgba(251, 216, 25, .15);
+      border-radius: 50%;
+    }
+
+    .profile_avatar_large {
+      position: absolute;
+      z-index: 2;
+      bottom: -35px;
+      left: 28px;
+      width: 90px;
+      height: 90px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 5px solid var(--white);
+      border-radius: 50%;
+      background: var(--yellow);
+      color: var(--green);
+      font-size: 28px;
+      font-weight: 800;
+    }
+
+    .profile_body {
+      padding: 55px 28px 28px;
+    }
+
+    .profile_body h2 {
+      margin-bottom: 5px;
+      color: var(--green);
+      font-family: "Manrope", sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .profile_body > p {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .profile_info {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-top: 25px;
+    }
+
+    .profile_info_item {
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+
+    .profile_info_item span {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--muted);
+      font-size: 10px;
+      text-transform: uppercase;
+    }
+
+    .profile_info_item strong {
+      color: var(--green);
+      font-size: 13px;
+      word-break: break-word;
+    }
+
+    /* =========================================
+       SETTINGS
+    ========================================= */
+
+    .settings_card {
+      max-width: 850px;
+      padding: 28px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+    }
+
+    .setting_row {
+      min-height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .setting_row:last-child {
+      border-bottom: 0;
+    }
+
+    .setting_row strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--green);
+      font-size: 13px;
+    }
+
+    .setting_row span {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .toggle {
+      position: relative;
+      width: 45px;
+      height: 24px;
+      display: inline-block;
+    }
+
+    .toggle input {
+      display: none;
+    }
+
+    .toggle_slider {
+      position: absolute;
+      inset: 0;
+      border-radius: 30px;
+      background: #d9e2df;
+      cursor: pointer;
+      transition: .3s;
+    }
+
+    .toggle_slider::before {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      left: 3px;
+      top: 3px;
+      border-radius: 50%;
+      background: var(--white);
+      transition: .3s;
+    }
+
+    .toggle input:checked + .toggle_slider {
+      background: var(--green);
+    }
+
+    .toggle input:checked + .toggle_slider::before {
+      transform: translateX(21px);
+      background: var(--yellow);
+    }
+
+    /* =========================================
+       NO RESULTS
+    ========================================= */
+
+    .no_results {
+      display: none;
+      padding: 35px 20px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    /* =========================================
+       ANIMATIONS
+    ========================================= */
+
+    @keyframes sectionReveal {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes progressGrow {
+      from {
+        width: 0 !important;
+      }
+    }
+
+    /* =========================================
+       RESPONSIVE
+    ========================================= */
+
+    @media (max-width: 1200px) {
+
+      .stats_grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .content_grid,
+      .consulting_grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 991px) {
+
+      .user_sidebar {
+        transform: translateX(-100%);
+      }
+
+      .user_sidebar.open {
+        transform: translateX(0);
+      }
+
+      .user_main {
+        margin-left: 0;
+      }
+
+      .mobile_menu_btn {
+        display: inline-flex;
+      }
+
+      .user_header {
+        padding: 0 20px;
+      }
+
+      .header_search {
+        max-width: none;
+      }
+
+      .dashboard_content {
+        padding: 25px 20px;
+      }
+    }
+
+    @media (max-width: 767px) {
+
+      .user_header {
+        height: 72px;
+        gap: 10px;
+      }
+
+      .header_right {
+        gap: 8px;
+      }
+
+      .header_notification {
+        display: none;
+      }
+
+      .user_details {
+        display: none;
+      }
+
+      .header_search {
+        max-width: 220px;
+      }
+
+      .page_heading {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .stats_grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .profile_info {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 575px) {
+
+      .dashboard_content {
+        padding: 20px 14px;
+      }
+
+      .header_search {
+        display: none;
+      }
+
+      .stats_grid {
+        grid-template-columns: 1fr;
+      }
+
+      .quick_actions {
+        grid-template-columns: 1fr;
+      }
+
+      .section_toolbar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .section_search {
+        max-width: none;
+      }
+
+      .filter_select {
+        width: 100%;
+      }
+
+      .page_heading h1 {
+        font-size: 26px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =========================================
+       SIDEBAR
+  ========================================== -->
+
+  <aside class="user_sidebar" id="userSidebar">
+
+    <a href="index.html" class="sidebar_logo">
+      <img src="./assets/images/logos/logo.webp" alt="Stackly">
+    </a>
+
+    <nav class="sidebar_menu">
+
+      <span class="menu_label">Workspace</span>
+
+      <ul>
+
+        <li>
+          <a href="#" class="sidebar_link active" data-section="overview">
+            <i class="fa-solid fa-chart-pie"></i>
+            <span>Overview</span>
+          </a>
+        </li>
+
+        <li>
+          <a href="#" class="sidebar_link" data-section="projects">
+            <i class="fa-solid fa-folder-open"></i>
+            <span>My Projects</span>
+          </a>
+        </li>
+
+        <li>
+          <a href="#" class="sidebar_link" data-section="consulting">
+            <i class="fa-solid fa-handshake"></i>
+            <span>Consulting</span>
+          </a>
+        </li>
+
+        <li>
+          <a href="#" class="sidebar_link" data-section="reports">
+            <i class="fa-solid fa-chart-column"></i>
+            <span>Reports</span>
+          </a>
+        </li>
+
+        <li>
+          <a href="#" class="sidebar_link" data-section="messages">
+            <i class="fa-solid fa-envelope"></i>
+            <span>Messages</span>
+          </a>
+        </li>
+
+      </ul>
+
+      <span class="menu_label" style="margin-top:25px;">
+        Account
+      </span>
+
+      <ul>
+
+        <li>
+          <a href="#" class="sidebar_link" data-section="profile">
+            <i class="fa-solid fa-user"></i>
+            <span>My Profile</span>
+          </a>
+        </li>
+
+        <li>
+          <a href="#" class="sidebar_link" data-section="settings">
+            <i class="fa-solid fa-gear"></i>
+            <span>Settings</span>
+          </a>
+        </li>
+
+      </ul>
+
+    </nav>
+
+    <div class="sidebar_bottom">
+
+      <button
+        type="button"
+        class="logout_btn"
+        id="logoutBtn">
+
+        <i class="fa-solid fa-right-from-bracket"></i>
+        Logout
+
+      </button>
+
+    </div>
+
+  </aside>
+
+
+  <div class="sidebar_overlay" id="sidebarOverlay"></div>
+
+
+  <!-- =========================================
+       MAIN
+  ========================================== -->
+
+  <div class="user_main">
+
+    <!-- Header -->
+
+    <header class="user_header">
+
+      <button
+        type="button"
+        class="mobile_menu_btn"
+        id="mobileMenuBtn">
+
+        <i class="fa-solid fa-bars"></i>
+
+      </button>
+
+
+      <div class="header_search">
+
+        <i class="fa-solid fa-magnifying-glass"></i>
+
+        <input
+          type="search"
+          id="globalSearch"
+          placeholder="Search projects, reports, messages...">
+
+      </div>
+
+
+      <div class="header_right">
+
+        <button
+          type="button"
+          class="header_notification"
+          onclick="location.href='404.html'">
+
+          <i class="fa-regular fa-bell"></i>
+
+          <span class="notification_dot"></span>
+
+        </button>
+
+
+        <div class="header_user">
+
+          <div
+            class="user_avatar"
+            id="headerAvatar">
+            U
+          </div>
+
+          <div class="user_details">
+
+            <strong>User Account</strong>
+
+            <span id="headerEmail">
+              user@example.com
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <main class="dashboard_content">
+
+
+      <!-- =========================================
+           OVERVIEW
+      ========================================== -->
+
+      <section
+        class="dashboard_section active"
+        id="section-overview">
+
+        <div class="page_heading">
+
+          <div>
+
+            <span class="eyebrow">
+              Business Consulting
+            </span>
+
+            <h1>
+              Welcome Back
+            </h1>
+
+            <p>
+              Track your consulting projects, requests and business progress.
+            </p>
+
+          </div>
+
+          <a
+            href="404.html"
+            class="header_action">
+
+            <i class="fa-solid fa-plus"></i>
+            Request Consultation
+
+          </a>
+
+        </div>
+
+
+        <div class="stats_grid">
+
+          <div class="stat_card">
+
+            <div class="stat_top">
+
+              <div class="stat_icon">
+                <i class="fa-solid fa-folder-open"></i>
+              </div>
+
+              <span class="stat_change">
+                +2
+              </span>
+
+            </div>
+
+            <h3>08</h3>
+
+            <p>
+              Total Projects
+            </p>
+
+          </div>
+
+
+          <div class="stat_card">
+
+            <div class="stat_top">
+
+              <div class="stat_icon">
+                <i class="fa-solid fa-spinner"></i>
+              </div>
+
+              <span class="stat_change">
+                Active
+              </span>
+
+            </div>
+
+            <h3>03</h3>
+
+            <p>
+              Active Projects
+            </p>
+
+          </div>
+
+
+          <div class="stat_card">
+
+            <div class="stat_top">
+
+              <div class="stat_icon">
+                <i class="fa-solid fa-circle-check"></i>
+              </div>
+
+              <span class="stat_change">
+                Completed
+              </span>
+
+            </div>
+
+            <h3>05</h3>
+
+            <p>
+              Completed Projects
+            </p>
+
+          </div>
+
+
+          <div class="stat_card">
+
+            <div class="stat_top">
+
+              <div class="stat_icon">
+                <i class="fa-solid fa-message"></i>
+              </div>
+
+              <span class="stat_change">
+                +3
+              </span>
+
+            </div>
+
+            <h3>12</h3>
+
+            <p>
+              Messages
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="content_grid">
+
+          <!-- Project Progress -->
+
+          <div class="content_card">
+
+            <div class="card_header">
+
+              <div>
+
+                <h2>
+                  Project Progress
+                </h2>
+
+                <p>
+                  Current consulting projects
+                </p>
+
+              </div>
+
+              <a
+                href="#"
+                class="card_link"
+                data-target="projects">
+
+                View Projects
+
+              </a>
+
+            </div>
+
+
+            <div class="card_body">
+
+              <div class="project_item">
+
+                <div class="project_top">
+
+                  <strong>
+                    Business Strategy
+                  </strong>
+
+                  <span>
+                    82%
+                  </span>
+
+                </div>
+
+                <div class="progress_bar">
+
+                  <div
+                    class="progress_value"
+                    style="width:82%;">
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <div class="project_item">
+
+                <div class="project_top">
+
+                  <strong>
+                    Market Analysis
+                  </strong>
+
+                  <span>
+                    65%
+                  </span>
+
+                </div>
+
+                <div class="progress_bar">
+
+                  <div
+                    class="progress_value"
+                    style="width:65%;">
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <div class="project_item">
+
+                <div class="project_top">
+
+                  <strong>
+                    Process Optimization
+                  </strong>
+
+                  <span>
+                    48%
+                  </span>
+
+                </div>
+
+                <div class="progress_bar">
+
+                  <div
+                    class="progress_value yellow"
+                    style="width:48%;">
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <div class="project_item">
+
+                <div class="project_top">
+
+                  <strong>
+                    Growth Planning
+                  </strong>
+
+                  <span>
+                    30%
+                  </span>
+
+                </div>
+
+                <div class="progress_bar">
+
+                  <div
+                    class="progress_value"
+                    style="width:30%;">
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- Quick Actions -->
+
+          <div class="content_card">
+
+            <div class="card_header">
+
+              <div>
+
+                <h2>
+                  Quick Actions
+                </h2>
+
+                <p>
+                  Manage your account
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <div class="card_body">
+
+              <div class="quick_actions">
+
+                <a
+                  href="#"
+                  class="quick_action"
+                  data-target="consulting">
+
+                  <i class="fa-solid fa-calendar-plus"></i>
+
+                  <span>
+                    Book Consultation
+                  </span>
+
+                </a>
+
+
+                <a
+                  href="#"
+                  class="quick_action"
+                  data-target="projects">
+
+                  <i class="fa-solid fa-folder"></i>
+
+                  <span>
+                    View Projects
+                  </span>
+
+                </a>
+
+
+                <a
+                  href="404.html"
+                  class="quick_action">
+
+                  <i class="fa-solid fa-file-arrow-down"></i>
+
+                  <span>
+                    Download Report
+                  </span>
+
+                </a>
+
+
+                <a
+                  href="#"
+                  class="quick_action"
+                  data-target="messages">
+
+                  <i class="fa-solid fa-envelope"></i>
+
+                  <span>
+                    View Messages
+                  </span>
+
+                </a>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- Recent Activity -->
+
+        <div class="content_card">
+
+          <div class="card_header">
+
+            <div>
+
+              <h2>
+                Recent Activity
+              </h2>
+
+              <p>
+                Your latest account activity
+              </p>
+
+            </div>
+
+            <a
+              href="#"
+              class="card_link"
+              data-target="messages">
+
+              View All
+
+            </a>
+
+          </div>
+
+
+          <div class="card_body">
+
+            <div class="activity_item">
+
+              <div class="activity_icon">
+                <i class="fa-solid fa-file-circle-check"></i>
+              </div>
+
+              <div class="activity_content">
+
+                <strong>
+                  Business Strategy report updated
+                </strong>
+
+                <span>
+                  Your consultant updated the project report.
+                </span>
+
+              </div>
+
+            </div>
+
+
+            <div class="activity_item">
+
+              <div class="activity_icon">
+                <i class="fa-solid fa-calendar-check"></i>
+              </div>
+
+              <div class="activity_content">
+
+                <strong>
+                  Consultation scheduled
+                </strong>
+
+                <span>
+                  Your next consulting discussion has been scheduled.
+                </span>
+
+              </div>
+
+            </div>
+
+
+            <div class="activity_item">
+
+              <div class="activity_icon">
+                <i class="fa-solid fa-message"></i>
+              </div>
+
+              <div class="activity_content">
+
+                <strong>
+                  New consultant message
+                </strong>
+
+                <span>
+                  A new message is available in your inbox.
+                </span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =========================================
+           MY PROJECTS
+      ========================================== -->
+
+      <section
+        class="dashboard_section"
+        id="section-projects">
+
+        <div class="page_heading">
+
+          <div>
+
+            <span class="eyebrow">
+              Workspace
+            </span>
+
+            <h1>
+              My Projects
+            </h1>
+
+            <p>
+              Track your business consulting projects and progress.
+            </p>
+
+          </div>
+
+          <a
+            href="404.html"
+            class="header_action">
+
+            <i class="fa-solid fa-plus"></i>
+            New Request
+
+          </a>
+
+        </div>
+
+
+        <div class="section_toolbar">
+
+          <div class="section_search">
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+            <input
+              type="search"
+              class="table_search"
+              data-table="projectsTable"
+              placeholder="Search projects...">
+
+          </div>
+
+
+          <select
+            class="filter_select"
+            id="projectFilter">
+
+            <option value="all">
+              All Projects
+            </option>
+
+            <option value="active">
+              Active
+            </option>
+
+            <option value="pending">
+              Pending
+            </option>
+
+            <option value="completed">
+              Completed
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="table_wrap">
+
+          <table
+            class="user_table"
+            id="projectsTable">
+
+            <thead>
+
+              <tr>
+                <th>Project</th>
+                <th>Consulting Area</th>
+                <th>Progress</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+
+            </thead>
+
+
+            <tbody>
+
+              <tr data-status="active">
+
+                <td>
+                  <strong>
+                    Business Strategy
+                  </strong>
+                </td>
+
+                <td>
+                  Strategic Planning
+                </td>
+
+                <td>
+                  82%
+                </td>
+
+                <td>
+
+                  <span class="status active">
+                    <i class="fa-solid fa-circle"></i>
+                    Active
+                  </span>
+
+                </td>
+
+                <td>
+
+                  <a
+                    href="404.html"
+                    class="table_action">
+
+                    <i class="fa-solid fa-eye"></i>
+
+                  </a>
+
+                </td>
+
+              </tr>
+
+
+              <tr data-status="active">
+
+                <td>
+                  <strong>
+                    Market Analysis
+                  </strong>
+                </td>
+
+                <td>
+                  Market Research
+                </td>
+
+                <td>
+                  65%
+                </td>
+
+                <td>
+
+                  <span class="status active">
+                    <i class="fa-solid fa-circle"></i>
+                    Active
+                  </span>
+
+                </td>
+
+                <td>
+
+                  <a
+                    href="404.html"
+                    class="table_action">
+
+                    <i class="fa-solid fa-eye"></i>
+
+                  </a>
+
+                </td>
+
+              </tr>
+
+
+              <tr data-status="pending">
+
+                <td>
+                  <strong>
+                    Digital Transformation
+                  </strong>
+                </td>
+
+                <td>
+                  Business Transformation
+                </td>
+
+                <td>
+                  20%
+                </td>
+
+                <td>
+
+                  <span class="status pending">
+                    <i class="fa-solid fa-circle"></i>
+                    Pending
+                  </span>
+
+                </td>
+
+                <td>
+
+                  <a
+                    href="404.html"
+                    class="table_action">
+
+                    <i class="fa-solid fa-eye"></i>
+
+                  </a>
+
+                </td>
+
+              </tr>
+
+
+              <tr data-status="completed">
+
+                <td>
+                  <strong>
+                    Process Improvement
+                  </strong>
+                </td>
+
+                <td>
+                  Operations
+                </td>
+
+                <td>
+                  100%
+                </td>
+
+                <td>
+
+                  <span class="status completed">
+                    <i class="fa-solid fa-circle-check"></i>
+                    Completed
+                  </span>
+
+                </td>
+
+                <td>
+
+                  <a
+                    href="404.html"
+                    class="table_action">
+
+                    <i class="fa-solid fa-eye"></i>
+
+                  </a>
+
+                </td>
+
+              </tr>
+
+            </tbody>
+
+          </table>
+
+
+          <div
+            class="no_results"
+            id="projectsNoResults">
+
+            No projects found.
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =========================================
+           CONSULTING
+      ========================================== -->
+
+      <section
+        class="dashboard_section"
+        id="section-consulting">
+
+        <div class="page_heading">
+
+          <div>
+
+            <span class="eyebrow">
+              Business Support
+            </span>
+
+            <h1>
+              Consulting
+            </h1>
+
+            <p>
+              Submit a request for business consulting support.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="consulting_grid">
+
+          <div class="content_card">
+
+            <div class="card_header">
+
+              <div>
+
+                <h2>
+                  Request Consultation
+                </h2>
+
+                <p>
+                  Tell us about your business requirement.
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <div class="request_form">
+
+              <form
+                id="consultingForm"
+                novalidate>
+
+                <div class="form_group">
+
+                  <label for="consultingType">
+                    Consulting Area*
+                  </label>
+
+                  <select
+                    id="consultingType"
+                    required>
+
+                    <option value="">
+                      Select Consulting Area
+                    </option>
+
+                    <option>
+                      Strategic Business Planning
+                    </option>
+
+                    <option>
+                      Market Insights
+                    </option>
+
+                    <option>
+                      Operational Improvement
+                    </option>
+
+                    <option>
+                      Growth & Performance
+                    </option>
+
+                    <option>
+                      Digital Transformation
+                    </option>
+
+                  </select>
+
+                </div>
+
+
+                <div class="form_group">
+
+                  <label for="consultingDate">
+                    Preferred Date*
+                  </label>
+
+                  <input
+                    type="date"
+                    id="consultingDate"
+                    required>
+
+                </div>
+
+
+                <div class="form_group">
+
+                  <label for="consultingMessage">
+                    Business Requirement*
+                  </label>
+
+                  <textarea
+                    id="consultingMessage"
+                    placeholder="Describe your requirement..."
+                    required></textarea>
+
+                </div>
+
+
+                <button
+                  type="submit"
+                  class="form_submit">
+
+                  Submit Request
+                  <i class="fa-solid fa-arrow-right"></i>
+
+                </button>
+
+              </form>
+
+            </div>
+
+          </div>
+
+
+          <div class="content_card">
+
+            <div class="card_header">
+
+              <div>
+
+                <h2>
+                  Our Consulting Approach
+                </h2>
+
+                <p>
+                  A structured business improvement process.
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <div class="consulting_info">
+
+              <div class="info_box">
+
+                <div class="info_icon">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
+
+                <h3>
+                  Discovery & Understanding
+                </h3>
+
+                <p>
+                  We understand your business goals, challenges,
+                  market and current operations.
+                </p>
+
+              </div>
+
+
+              <div class="info_box">
+
+                <div class="info_icon">
+                  <i class="fa-solid fa-chart-line"></i>
+                </div>
+
+                <h3>
+                  Research & Analysis
+                </h3>
+
+                <p>
+                  We analyze business performance, market conditions,
+                  competitors and processes.
+                </p>
+
+              </div>
+
+
+              <div class="info_box">
+
+                <div class="info_icon">
+                  <i class="fa-solid fa-lightbulb"></i>
+                </div>
+
+                <h3>
+                  Strategy Development
+                </h3>
+
+                <p>
+                  We develop practical strategies focused on
+                  efficiency, performance and sustainable growth.
+                </p>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =========================================
+           REPORTS
+      ========================================== -->
+
+      <section
+        class="dashboard_section"
+        id="section-reports">
+
+        <div class="page_heading">
+
+          <div>
+
+            <span class="eyebrow">
+              Analytics
+            </span>
+
+            <h1>
+              My Reports
+            </h1>
+
+            <p>
+              Review your business consulting reports.
+            </p>
+
+          </div>
+
+          <a
+            href="404.html"
+            class="header_action">
+
+            <i class="fa-solid fa-download"></i>
+            Download Report
+
+          </a>
+
+        </div>
+
+
+        <div class="stats_grid">
+
+          <div class="stat_card">
+
+            <div class="stat_top">
+
+              <div class="stat_icon">
+                <i class="fa-solid fa-file-lines"></i>
+              </div>
+
+            </div>
+
+            <h3>
+              12
+            </h3>
+
+            <p>
+              Total Reports
+            </p>
+
+          </div>
+
+
+          <div class="stat_card">
+
+            <div class="stat_top">
+
+              <div class="stat_icon">
+                <i class="fa-solid fa-file-circle-check"></i>
+              </div>
+
+            </div>
+
+            <h3>
+              08
+            </h3>
+
+            <p>
+              Completed Reports
+            </p>
+
+          </div>
+
+
+          <div class="stat_card">
+
+            <div class="stat_top">
+
+              <div class="stat_icon">
+                <i class="fa-solid fa-clock"></i>
+              </div>
+
+            </div>
+
+            <h3>
+              03
+            </h3>
+
+            <p>
+              Pending Reports
+            </p>
+
+          </div>
+
+
+          <div class="stat_card">
+
+            <div class="stat_top">
+
+              <div class="stat_icon">
+                <i class="fa-solid fa-chart-line"></i>
+              </div>
+
+            </div>
+
+            <h3>
+              84%
+            </h3>
+
+            <p>
+              Business Progress
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="section_toolbar">
+
+          <div class="section_search">
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+            <input
+              type="search"
+              class="table_search"
+              data-table="reportsTable"
+              placeholder="Search reports...">
+
+          </div>
+
+        </div>
+
+
+        <div class="table_wrap">
+
+          <table
+            class="user_table"
+            id="reportsTable">
+
+            <thead>
+
+              <tr>
+                <th>Report</th>
+                <th>Project</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+
+            </thead>
+
+            <tbody>
+
+              <tr>
+
+                <td>
+                  Business Strategy Report
+                </td>
+
+                <td>
+                  Business Strategy
+                </td>
+
+                <td>
+                  16 Sep 2026
+                </td>
+
+                <td>
+
+                  <span class="status completed">
+                    Completed
+                  </span>
+
+                </td>
+
+                <td>
+
+                  <a
+                    href="404.html"
+                    class="table_action">
+
+                    <i class="fa-solid fa-download"></i>
+
+                  </a>
+
+                </td>
+
+              </tr>
+
+
+              <tr>
+
+                <td>
+                  Market Analysis Report
+                </td>
+
+                <td>
+                  Market Analysis
+                </td>
+
+                <td>
+                  14 Sep 2026
+                </td>
+
+                <td>
+
+                  <span class="status completed">
+                    Completed
+                  </span>
+
+                </td>
+
+                <td>
+
+                  <a
+                    href="404.html"
+                    class="table_action">
+
+                    <i class="fa-solid fa-download"></i>
+
+                  </a>
+
+                </td>
+
+              </tr>
+
+
+              <tr>
+
+                <td>
+                  Process Optimization Report
+                </td>
+
+                <td>
+                  Process Improvement
+                </td>
+
+                <td>
+                  12 Sep 2026
+                </td>
+
+                <td>
+
+                  <span class="status pending">
+                    Pending
+                  </span>
+
+                </td>
+
+                <td>
+
+                  <a
+                    href="404.html"
+                    class="table_action">
+
+                    <i class="fa-solid fa-eye"></i>
+
+                  </a>
+
+                </td>
+
+              </tr>
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </section>
+
+
+      <!-- =========================================
+           MESSAGES
+      ========================================== -->
+
+      <section
+        class="dashboard_section"
+        id="section-messages">
+
+        <div class="page_heading">
+
+          <div>
+
+            <span class="eyebrow">
+              Communication
+            </span>
+
+            <h1>
+              Messages
+            </h1>
+
+            <p>
+              View communication from your consulting team.
+            </p>
+
+          </div>
+
+          <a
+            href="404.html"
+            class="header_action">
+
+            <i class="fa-solid fa-pen"></i>
+            New Message
+
+          </a>
+
+        </div>
+
+
+        <div class="section_toolbar">
+
+          <div class="section_search">
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+            <input
+              type="search"
+              class="table_search"
+              data-table="messagesTable"
+              placeholder="Search messages...">
+
+          </div>
+
+        </div>
+
+
+        <div class="table_wrap">
+
+          <table
+            class="user_table"
+            id="messagesTable">
+
+            <thead>
+
+              <tr>
+                <th>From</th>
+                <th>Subject</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+
+            </thead>
+
+            <tbody>
+
+              <tr>
+
+                <td>
+                  Consulting Team
+                </td>
+
+                <td>
+                  Business Strategy Update
+                </td>
+
+                <td>
+                  16 Sep 2026
+                </td>
+
+                <td>
+
+                  <span class="status pending">
+                    New
+                  </span>
+
+                </td>
+
+                <td>
+
+                  <a
+                    href="404.html"
+                    class="table_action">
+
+                    <i class="fa-solid fa-eye"></i>
+
+                  </a>
+
+                </td>
+
+              </tr>
+
+
+              <tr>
+
+                <td>
+                  Market Research Team
+                </td>
+
+                <td>
+                  Market Analysis Discussion
+                </td>
+
+                <td>
+                  15 Sep 2026
+                </td>
+
+                <td>
+
+                  <span class="status active">
+                    Read
+                  </span>
+
+                </td>
+
+                <td>
+
+                  <a
+                    href="404.html"
+                    class="table_action">
+
+                    <i class="fa-solid fa-eye"></i>
+
+                  </a>
+
+                </td>
+
+              </tr>
+
+
+              <tr>
+
+                <td>
+                  Business Consultant
+                </td>
+
+                <td>
+                  Next Consultation
+                </td>
+
+                <td>
+                  13 Sep 2026
+                </td>
+
+                <td>
+
+                  <span class="status active">
+                    Read
+                  </span>
+
+                </td>
+
+                <td>
+
+                  <a
+                    href="404.html"
+                    class="table_action">
+
+                    <i class="fa-solid fa-eye"></i>
+
+                  </a>
+
+                </td>
+
+              </tr>
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </section>
+
+
+      <!-- =========================================
+           PROFILE
+      ========================================== -->
+
+      <section
+        class="dashboard_section"
+        id="section-profile">
+
+        <div class="page_heading">
+
+          <div>
+
+            <span class="eyebrow">
+              Account
+            </span>
+
+            <h1>
+              My Profile
+            </h1>
+
+            <p>
+              Manage your Stackly account information.
+            </p>
+
+          </div>
+
+          <a
+            href="404.html"
+            class="header_action">
+
+            <i class="fa-solid fa-pen"></i>
+            Edit Profile
+
+          </a>
+
+        </div>
+
+
+        <div class="profile_card">
+
+          <div class="profile_banner">
+
+            <div
+              class="profile_avatar_large"
+              id="profileAvatar">
+
+              U
+
+            </div>
+
+          </div>
+
+
+          <div class="profile_body">
+
+            <h2>
+              User Account
+            </h2>
+
+            <p>
+              Business Consulting Client
+            </p>
+
+
+            <div class="profile_info">
+
+              <div class="profile_info_item">
+
+                <span>
+                  Email Address
+                </span>
+
+                <strong id="profileEmail">
+                  user@example.com
+                </strong>
+
+              </div>
+
+
+              <div class="profile_info_item">
+
+                <span>
+                  Role
+                </span>
+
+                <strong>
+                  User
+                </strong>
+
+              </div>
+
+
+              <div class="profile_info_item">
+
+                <span>
+                  Login Time
+                </span>
+
+                <strong id="profileLoginTime">
+                  -
+                </strong>
+
+              </div>
+
+
+              <div class="profile_info_item">
+
+                <span>
+                  Account Status
+                </span>
+
+                <strong>
+                  Active
+                </strong>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =========================================
+           SETTINGS
+      ========================================== -->
+
+      <section
+        class="dashboard_section"
+        id="section-settings">
+
+        <div class="page_heading">
+
+          <div>
+
+            <span class="eyebrow">
+              Configuration
+            </span>
+
+            <h1>
+              Settings
+            </h1>
+
+            <p>
+              Manage your dashboard preferences.
+            </p>
+
+          </div>
+
+          <a
+            href="404.html"
+            class="header_action">
+
+            <i class="fa-solid fa-floppy-disk"></i>
+            Save Changes
+
+          </a>
+
+        </div>
+
+
+        <div class="settings_card">
+
+          <div class="setting_row">
+
+            <div>
+
+              <strong>
+                Email Notifications
+              </strong>
+
+              <span>
+                Receive important consulting updates.
+              </span>
+
+            </div>
+
+            <label class="toggle">
+
+              <input
+                type="checkbox"
+                checked>
+
+              <span class="toggle_slider"></span>
+
+            </label>
+
+          </div>
+
+
+          <div class="setting_row">
+
+            <div>
+
+              <strong>
+                Project Updates
+              </strong>
+
+              <span>
+                Receive notifications when project status changes.
+              </span>
+
+            </div>
+
+            <label class="toggle">
+
+              <input
+                type="checkbox"
+                checked>
+
+              <span class="toggle_slider"></span>
+
+            </label>
+
+          </div>
+
+
+          <div class="setting_row">
+
+            <div>
+
+              <strong>
+                Report Notifications
+              </strong>
+
+              <span>
+                Get notified when new reports are available.
+              </span>
+
+            </div>
+
+            <label class="toggle">
+
+              <input
+                type="checkbox"
+                checked>
+
+              <span class="toggle_slider"></span>
+
+            </label>
+
+          </div>
+
+
+          <div class="setting_row">
+
+            <div>
+
+              <strong>
+                Consultation Reminders
+              </strong>
+
+              <span>
+                Receive reminders about upcoming consultations.
+              </span>
+
+            </div>
+
+            <label class="toggle">
+
+              <input
+                type="checkbox">
+
+              <span class="toggle_slider"></span>
+
+            </label>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+
+  <!-- =========================================
+       JAVASCRIPT
+  ========================================== -->
+
+  <script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+      /* =========================================
+         LOGIN DETAILS
+      ========================================== */
+
+      const storedEmail =
+        localStorage.getItem("stacklyUserEmail") ||
+        "user@example.com";
+
+      document.getElementById("headerEmail").textContent =
+        storedEmail;
+
+      document.getElementById("profileEmail").textContent =
+        storedEmail;
+
+
+      /* Login Time */
+
+      let loginTime =
+        localStorage.getItem("stacklyLoginTime");
+
+      if (!loginTime) {
+
+        loginTime = new Date().toLocaleString("en-IN", {
+          dateStyle: "medium",
+          timeStyle: "short"
+        });
+
+        localStorage.setItem(
+          "stacklyLoginTime",
+          loginTime
+        );
+
+      }
+
+      document.getElementById("profileLoginTime").textContent =
+        loginTime;
+
+
+      /* Avatar */
+
+      const firstLetter =
+        storedEmail.charAt(0).toUpperCase() || "U";
+
+      document.getElementById("headerAvatar").textContent =
+        firstLetter;
+
+      document.getElementById("profileAvatar").textContent =
+        firstLetter;
+
+
+      /* =========================================
+         SIDEBAR NAVIGATION
+      ========================================== */
+
+      const sidebar =
+        document.getElementById("userSidebar");
+
+      const overlay =
+        document.getElementById("sidebarOverlay");
+
+      const sidebarLinks =
+        document.querySelectorAll(".sidebar_link");
+
+      const sections =
+        document.querySelectorAll(".dashboard_section");
+
+
+      function openSection(target) {
+
+        sidebarLinks.forEach(function (link) {
+          link.classList.remove("active");
+
+          if (
+            link.getAttribute("data-section") === target
+          ) {
+            link.classList.add("active");
+          }
+        });
+
+
+        sections.forEach(function (section) {
+          section.classList.remove("active");
+        });
+
+
+        const targetSection =
+          document.getElementById(
+            "section-" + target
+          );
+
+        if (targetSection) {
+          targetSection.classList.add("active");
+        }
+
+
+        sidebar.classList.remove("open");
+        overlay.classList.remove("show");
+
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth"
+        });
+
+      }
+
+
+      sidebarLinks.forEach(function (link) {
+
+        link.addEventListener("click", function (e) {
+
+          e.preventDefault();
+
+          openSection(
+            this.getAttribute("data-section")
+          );
+
+        });
+
+      });
+
+
+      /* =========================================
+         QUICK LINKS
+      ========================================== */
+
+      document.querySelectorAll("[data-target]")
+        .forEach(function (link) {
+
+          link.addEventListener("click", function (e) {
+
+            e.preventDefault();
+
+            const target =
+              this.getAttribute("data-target");
+
+            openSection(target);
+
+          });
+
+        });
+
+
+      /* =========================================
+         MOBILE SIDEBAR
+      ========================================== */
+
+      document
+        .getElementById("mobileMenuBtn")
+        .addEventListener("click", function () {
+
+          sidebar.classList.toggle("open");
+          overlay.classList.toggle("show");
+
+        });
+
+
+      overlay.addEventListener("click", function () {
+
+        sidebar.classList.remove("open");
+        overlay.classList.remove("show");
+
+      });
+
+
+      /* =========================================
+         GLOBAL SEARCH
+      ========================================== */
+
+      const globalSearch =
+        document.getElementById("globalSearch");
+
+
+      globalSearch.addEventListener("keydown", function (e) {
+
+        if (e.key !== "Enter") return;
+
+        const query =
+          this.value.trim().toLowerCase();
+
+        if (!query) return;
+
+
+        let found = false;
+        let targetSection = null;
+
+
+        document.querySelectorAll(".dashboard_section")
+          .forEach(function (section) {
+
+            if (
+              section.textContent
+                .toLowerCase()
+                .includes(query)
+            ) {
+
+              found = true;
+
+              if (!targetSection) {
+                targetSection =
+                  section.id.replace(
+                    "section-",
+                    ""
+                  );
+              }
+
+            }
+
+          });
+
+
+        if (found && targetSection) {
+
+          openSection(targetSection);
+
+        } else {
+
+          alert(
+            "No matching results found for: " +
+            query
+          );
+
+        }
+
+      });
+
+
+      /* =========================================
+         TABLE SEARCH
+      ========================================== */
+
+      document.querySelectorAll(".table_search")
+        .forEach(function (searchInput) {
+
+          searchInput.addEventListener(
+            "input",
+            function () {
+
+              const query =
+                this.value.trim().toLowerCase();
+
+              const tableId =
+                this.getAttribute("data-table");
+
+              const table =
+                document.getElementById(tableId);
+
+              if (!table) return;
+
+
+              const rows =
+                table.querySelectorAll(
+                  "tbody tr"
+                );
+
+              let visibleRows = 0;
+
+
+              rows.forEach(function (row) {
+
+                const matches =
+                  row.textContent
+                    .toLowerCase()
+                    .includes(query);
+
+                row.style.display =
+                  matches ? "" : "none";
+
+                if (matches) {
+                  visibleRows++;
+                }
+
+              });
+
+
+              const noResults =
+                document.getElementById(
+                  tableId.replace(
+                    "Table",
+                    "NoResults"
+                  )
+                );
+
+
+              if (noResults) {
+
+                noResults.style.display =
+                  visibleRows === 0
+                    ? "block"
+                    : "none";
+
+              }
+
+            }
+          );
+
+        });
+
+
+      /* =========================================
+         PROJECT FILTER
+      ========================================== */
+
+      const projectFilter =
+        document.getElementById(
+          "projectFilter"
+        );
+
+
+      projectFilter.addEventListener(
+        "change",
+        function () {
+
+          const selected =
+            this.value;
+
+          const rows =
+            document.querySelectorAll(
+              "#projectsTable tbody tr"
+            );
+
+          let visibleRows = 0;
+
+
+          rows.forEach(function (row) {
+
+            const status =
+              row.getAttribute(
+                "data-status"
+              );
+
+            const show =
+              selected === "all" ||
+              selected === status;
+
+            row.style.display =
+              show ? "" : "none";
+
+            if (show) {
+              visibleRows++;
+            }
+
+          });
+
+
+          document.getElementById(
+            "projectsNoResults"
+          ).style.display =
+            visibleRows === 0
+              ? "block"
+              : "none";
+
+        }
+      );
+
+
+      /* =========================================
+         CONSULTATION FORM
+      ========================================== */
+
+      const consultingForm =
+        document.getElementById(
+          "consultingForm"
+        );
+
+
+      consultingForm.addEventListener(
+        "submit",
+        function (e) {
+
+          e.preventDefault();
+
+
+          const type =
+            document.getElementById(
+              "consultingType"
+            ).value;
+
+          const date =
+            document.getElementById(
+              "consultingDate"
+            ).value;
+
+          const message =
+            document.getElementById(
+              "consultingMessage"
+            ).value.trim();
+
+
+          if (
+            type === "" ||
+            date === "" ||
+            message.length < 10
+          ) {
+
+            alert(
+              "Please complete all consultation details. Message must contain at least 10 characters."
+            );
+
+            return;
+
+          }
+
+
+          window.location.href =
+            "404.html";
+
+        }
+      );
+
+
+      /* =========================================
+         LOGOUT
+      ========================================== */
+
+      document
+        .getElementById("logoutBtn")
+        .addEventListener("click", function () {
+
+          localStorage.removeItem(
+            "stacklyUserEmail"
+          );
+
+          localStorage.removeItem(
+            "stacklyUserRole"
+          );
+
+          localStorage.removeItem(
+            "stacklyLoginTime"
+          );
+
+          window.location.href =
+            "signin.html";
+
+        });
+
+    });
+
+  </script>
+
+</body>
+
+</html>
